@@ -1,45 +1,46 @@
 <!DOCTYPE html>
-
-<html lang="pt-BR">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-```
-<title>Dashboard</title>
-```
-
+    <title>Dashboard</title>
 </head>
 
 <body>
 
-```
-<h1>Bem-vindo!</h1>
+<h1>Painel</h1>
+
+<h3>
+Usuário:
+<span id="nome"></span>
+</h3>
 
 <p>
-    Nome:
-    <span id="nome"></span>
+Email:
+<span id="email"></span>
 </p>
 
 <p>
-    Email:
-    <span id="email"></span>
+Nível:
+<span id="nivel"></span>
 </p>
 
-<p>
-    Nível:
-    <span id="level"></span>
-</p>
 
-<button id="logout">
-    Sair
+<button onclick="abrirUsuarios()">
+Gerenciar Usuários
 </button>
 
+<button onclick="abrirJogos()">
+Gerenciar Jogos
+</button>
+
+
+<button id="logout">
+Sair
+</button>
+
+
 <script src="dashboard.js"></script>
-```
 
 </body>
 
 </html>
-

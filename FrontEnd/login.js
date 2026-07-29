@@ -36,7 +36,7 @@ form.addEventListener("submit", async function(event) {
                 localStorage.getItem("usuario")
             );
 
-            window.location.href = "dashboard.html";
+            window.location.href = "./dashboard.html";
 
         }
 

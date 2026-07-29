@@ -1,42 +1,49 @@
-const usuarioJSON = localStorage.getItem("usuario");
+const usuario = JSON.parse(
+    localStorage.getItem("usuario")
+);
 
-console.log("Valor encontrado no localStorage:", usuarioJSON);
 
-if (!usuarioJSON) {
+if(!usuario){
 
-    console.log("Nenhum usuário encontrado.");
+    window.location.href="login.html";
 
-    setTimeout(() => {
-        window.location.href = "login.html";
-    }, 5000);
-
-} else {
-
-    const usuario = JSON.parse(usuarioJSON);
-
-    console.log("Usuário armazenado:", usuario);
-
-    document.getElementById("nome").textContent =
-        usuario.nome;
-
-    document.getElementById("email").textContent =
-        usuario.email;
-
-    document.getElementById("level").textContent =
-        usuario.level;
 }
 
-// Botão de logout
+
+document.getElementById("nome").textContent =
+    usuario.nome;
+
+
+document.getElementById("email").textContent =
+    usuario.email;
+
+
+document.getElementById("nivel").textContent =
+    usuario.level;
+
+
+
+function abrirUsuarios(){
+
+    window.location.href="./users.html";
+
+}
+
+
+function abrirJogos(){
+
+    window.location.href="./games.html";
+
+}
+
+
+
 document
 .getElementById("logout")
-.addEventListener("click", function() {
+.addEventListener("click",()=>{
 
-
-    // Remove o usuário armazenado
     localStorage.removeItem("usuario");
 
-    // Volta para a página de login
-    window.location.href = "login.html";
+    window.location.href="./login.html";
 
 });
-

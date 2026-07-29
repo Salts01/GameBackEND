@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Gerenciar Usuários</title>
+
+</head>
+
+
+<body>
+
+
+<h1>Gerenciamento de Usuários</h1>
+
+
+<h2>Lista de usuários</h2>
+
+
+<table border="1">
+
+<thead>
+
+<tr>
+
+<th>Nome</th>
+<th>Email</th>
+<th>Nível</th>
+<th>Ativo</th>
+<th>Ações</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="listaUsuarios">
+
+</tbody>
+
+
+</table>
+
+
+
+<hr>
+
+
+
+<h2>Criar usuário</h2>
+
+
+<label>
+Nome:
+</label>
+
+<input 
+id="nomeNovo"
+type="text"
+>
+
+
+<br>
+
+
+<label>
+Email:
+</label>
+
+<input 
+id="emailNovo"
+type="email"
+>
+
+
+<br>
+
+
+<label>
+Senha:
+</label>
+
+<input 
+id="senhaNova"
+type="password"
+>
+
+
+<br>
+
+
+<label>
+Nível:
+</label>
+
+<input 
+id="nivelNovo"
+type="number"
+min="1"
+max="4"
+>
+
+
+<br><br>
+
+
+<button onclick="criarUsuario()">
+
+Criar usuário
+
+</button>
+
+
+
+<br><br>
+
+
+<button onclick="voltarDashboard()">
+
+Voltar
+
+</button>
+
+
+
+<script src="users.js"></script>
+
+
+</body>
+
+
+</html>
