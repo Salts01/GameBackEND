@@ -1,0 +1,58 @@
+version: '2'
+
+services:
+  
+  postgres:
+    
+    image: postgres:17
+
+    container_name: postgresql
+    
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: geloseco
+      POSTGRES_DB: db1
+
+    restart: unless-stopped
+    
+    ports:
+
+         - "5000:5432"
+
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+    - ./Postgresql/db1.sql:/docker-entrypoint-initdb.d/db1.sql
+
+  backend:
+
+    build: ./BackEnd
+    
+    container_name: python_api
+
+    restart: unless-stopped
+
+    depends_on: 
+      - postgres
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ./BackEnd:/app/python
+
+  frontend:
+
+     build: ./FrontEnd
+
+     container_name: apache
+
+     restart: unless-stopped
+
+     depends_on:
+       - backend
+
+     ports:
+       - "80:80"
+  
+volumes: 
+  postgres_data:

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 
-engine= create_engine("postgresql://postgres:geloseco@localhost:5432/db1")
+engine= create_engine("postgresql://postgres:geloseco@postgresql:5432/db1")
 
 api=FastAPI()
 
