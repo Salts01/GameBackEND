@@ -16,27 +16,23 @@ form.addEventListener("submit", async function(event) {
 
         const data = await response.json();
 
-        console.log("Resposta da API:", data);
+        console.log("Token recebido:", data);
 
-        if (data.loggin === true) {
+        if (response.ok && typeof data === "string") {
 
-            console.log("Login realizado!");
+            // Salva o JWT
+            localStorage.setItem("token", data);
 
-            const usuario = JSON.stringify(data.usuario);
-
-            console.log("Dados que serão salvos:", usuario);
-
-            localStorage.setItem(
-                "usuario",
-                usuario
-            );
-
-            console.log(
-                "Dados salvos no localStorage:",
-                localStorage.getItem("usuario")
-            );
+            console.log("Token salvo:", localStorage.getItem("token"));
 
             window.location.href = "./dashboard.html";
+
+        } else {
+
+            mensagem.textContent =
+                typeof data === "string"
+                    ? data
+                    : "Email ou senha incorretos.";
 
         }
 

@@ -1,253 +1,209 @@
 const API = "http://localhost:8000";
 
+const token = localStorage.getItem("token");
 
+if (!token) {
 
-// ==========================
-// CARREGAR USUÁRIOS
-// ==========================
-
-async function carregarUsuarios(){
-
-
-    const resposta = await fetch(
-        `${API}/admin/Users`
-    );
-
-
-    const usuarios = await resposta.json();
-
-
-    const tabela =
-    document.getElementById("listaUsuarios");
-
-
-    // limpa tabela antes de carregar
-    tabela.innerHTML = "";
-
-
-
-    usuarios.forEach(user => {
-
-
-        let linha =
-        document.createElement("tr");
-
-
-
-        linha.innerHTML = `
-
-        <td>${user.Nome}</td>
-
-        <td>${user.Email}</td>
-
-        <td>${user.Nivel}</td>
-
-        <td>${user.Ativo}</td>
-
-
-        <td>
-
-            <button onclick="
-            alterarUsuario('${user.Email}')
-            ">
-                Alterar
-            </button>
-
-
-        </td>
-
-        `;
-
-
-
-        tabela.appendChild(linha);
-
-
-
-    });
-
+    window.location.href = "./login.html";
 
 }
 
 
+// ============================
+// LISTAR USUÁRIOS
+// ============================
+
+async function carregarUsuarios() {
+
+    try {
+
+        const resposta = await fetch(
+            `${API}/admin/Users?token=${encodeURIComponent(token)}`
+        );
+
+        const usuarios = await resposta.json();
+
+        console.log("Usuários:", usuarios);
+
+        if (!resposta.ok) {
+
+            alert(JSON.stringify(usuarios));
+
+            return;
+        }
+
+        const tabela =
+            document.getElementById("listaUsuarios");
+
+        tabela.innerHTML = "";
+
+        usuarios.forEach(user => {
+
+            const linha =
+                document.createElement("tr");
+
+            linha.innerHTML = `
+
+                <td>${user.Nome}</td>
+
+                <td>${user.Email}</td>
+
+                <td>${user.Nivel}</td>
+
+                <td>${user.Ativo}</td>
+
+                <td>
+
+                    <button
+                        onclick="alterarUsuario('${user.Email}')">
+                        Alterar
+                    </button>
+
+                </td>
+
+            `;
+
+            tabela.appendChild(linha);
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Erro ao carregar usuários.");
+
+    }
+
+}
 
 
-
-// ==========================
+// ============================
 // CRIAR USUÁRIO
-// ==========================
+// ============================
 
-
-async function criarUsuario(){
-
+async function criarUsuario() {
 
     const nome =
-    document.getElementById("nomeNovo").value;
-
+        document.getElementById("nomeNovo").value;
 
     const email =
-    document.getElementById("emailNovo").value;
-
+        document.getElementById("emailNovo").value;
 
     const password =
-    document.getElementById("senhaNova").value;
+        document.getElementById("senhaNova").value;
+
+    const level =
+        document.getElementById("nivelNovo").value;
+
+
+    try {
+
+        const resposta = await fetch(
+
+            `${API}/admin/criarUser` +
+
+            `?nome=${encodeURIComponent(nome)}` +
+
+            `&email=${encodeURIComponent(email)}` +
+
+            `&password=${encodeURIComponent(password)}` +
+
+            `&level=${encodeURIComponent(level)}` +
+
+            `&token=${encodeURIComponent(token)}`,
+
+            {
+                method: "POST"
+            }
+
+        );
+
+
+        const resultado =
+            await resposta.json();
+
+        alert(JSON.stringify(resultado));
+
+        carregarUsuarios();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Erro ao criar usuário.");
+
+    }
+
+}
+
+
+// ============================
+// ALTERAR USUÁRIO
+// ============================
+
+async function alterarUsuario(email) {
+
+    const password =
+        prompt("Nova senha:");
+
+    if (password === null) {
+        return;
+    }
 
 
     const level =
-    document.getElementById("nivelNovo").value;
+        prompt("Novo nível (1-4):");
 
-
-
-    const resposta =
-    await fetch(
-
-        `${API}/admin/criarUser?`+
-        `nome=${encodeURIComponent(nome)}`+
-        `&email=${encodeURIComponent(email)}`+
-        `&password=${encodeURIComponent(password)}`+
-        `&level=${level}`,
-
-        {
-
-            method:"POST"
-
-        }
-
-    );
-
-
-
-    const resultado =
-    await resposta.json();
-
-
-
-    alert(
-        JSON.stringify(resultado)
-    );
-
-
-
-    carregarUsuarios();
-
-
-}
-
-
-
-
-
-// ==========================
-// ALTERAR USUÁRIO
-// ==========================
-
-
-async function alterarUsuario(email){
-
-
-
-    let password =
-    prompt(
-        "Nova senha:"
-    );
-
-
-
-    if(password === null){
-
+    if (level === null) {
         return;
-
     }
 
 
+    const ativo =
+        confirm("Usuário ativo?");
 
 
-    let level =
-    prompt(
-        "Novo nível (1-4):"
-    );
+    try {
+
+        const resposta = await fetch(
+
+            `${API}/admin/alteraUser` +
+
+            `?email=${encodeURIComponent(email)}` +
+
+            `&password=${encodeURIComponent(password)}` +
+
+            `&level=${encodeURIComponent(level)}` +
+
+            `&ativo=${ativo}` +
+
+            `&token=${encodeURIComponent(token)}`,
+
+            {
+                method: "POST"
+            }
+
+        );
 
 
+        const resultado =
+            await resposta.json();
 
-    if(level === null){
 
-        return;
+        alert(JSON.stringify(resultado));
+
+        carregarUsuarios();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Erro ao alterar usuário.");
 
     }
 
-
-
-
-    let ativo =
-    confirm(
-        "Usuário ficará ativo?"
-    );
-
-
-
-
-
-    const resposta =
-    await fetch(
-
-        `${API}/admin/alteraUser?`+
-
-        `email=${encodeURIComponent(email)}`+
-
-        `&password=${encodeURIComponent(password)}`+
-
-        `&level=${level}`+
-
-        `&ativo=${ativo}`,
-
-        {
-
-            method:"POST"
-
-        }
-
-    );
-
-
-
-
-    const resultado =
-    await resposta.json();
-
-
-
-    alert(
-        JSON.stringify(resultado)
-    );
-
-
-
-    carregarUsuarios();
-
-
 }
 
-
-
-
-
-
-// ==========================
-// VOLTAR
-// ==========================
-
-
-function voltarDashboard(){
-
-    window.location.href =
-    "dashboard.html";
-
-}
-
-
-
-
-
-// inicia página
 
 carregarUsuarios();

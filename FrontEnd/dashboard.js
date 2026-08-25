@@ -1,49 +1,95 @@
-const usuario = JSON.parse(
-    localStorage.getItem("usuario")
-);
+const token = localStorage.getItem("token");
 
+if (!token) {
 
-if(!usuario){
-
-    window.location.href="login.html";
+    window.location.href = "./login.html";
 
 }
 
 
+// Decodifica o payload do JWT
+function decodificarToken(token) {
+
+    try {
+
+        const payload = token.split(".")[1];
+
+        const base64 = payload
+            .replace(/-/g, "+")
+            .replace(/_/g, "/");
+
+        const jsonPayload =
+            decodeURIComponent(
+                atob(base64)
+                    .split("")
+                    .map(function(char) {
+                        return "%" +
+                            ("00" + char.charCodeAt(0).toString(16))
+                            .slice(-2);
+                    })
+                    .join("")
+            );
+
+        return JSON.parse(jsonPayload);
+
+    } catch (error) {
+
+        console.error("Token inválido:", error);
+
+        localStorage.removeItem("token");
+
+        window.location.href = "./login.html";
+    }
+}
+
+
+const usuario = decodificarToken(token);
+
+console.log("Usuário:", usuario);
+
+
+// Preenche informações
 document.getElementById("nome").textContent =
     usuario.nome;
-
 
 document.getElementById("email").textContent =
     usuario.email;
 
-
-document.getElementById("nivel").textContent =
+document.getElementById("level").textContent =
     usuario.level;
 
 
+// Controle dos menus
+const usuariosMenu =
+    document.getElementById("usuariosMenu");
 
-function abrirUsuarios(){
+const jogosMenu =
+    document.getElementById("jogosMenu");
 
-    window.location.href="./users.html";
+
+// Level 1 pode administrar usuários
+if (usuario.level !== 1) {
+
+    usuariosMenu.style.display = "none";
 
 }
 
 
-function abrirJogos(){
+// Level 1, 2 e 3 podem acessar jogos
+if (usuario.level > 3) {
 
-    window.location.href="./games.html";
+    jogosMenu.style.display = "none";
 
 }
 
 
-
+// Logout
 document
-.getElementById("logout")
-.addEventListener("click",()=>{
+    .getElementById("logout")
+    .addEventListener("click", function() {
 
-    localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
 
-    window.location.href="./login.html";
+        window.location.href = "./login.html";
 
-});
+    });

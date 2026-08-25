@@ -1,138 +1,104 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
 
     <meta charset="UTF-8">
-    <title>Gerenciar Jogos</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>GameBackEND - Jogos</title>
 
 </head>
 
-
 <body>
 
+    <h1>Gerenciamento de Jogos</h1>
 
-<h1>Gerenciamento de Jogos</h1>
+    <a href="./dashboard.html">
+        Voltar para Dashboard
+    </a>
 
+    <hr>
 
-<h2>Lista de jogos</h2>
 
+    <div id="areaPublicar">
 
+        <h2>Publicar jogo</h2>
 
-<table border="1">
+        <input
+            id="nomeGame"
+            type="text"
+            placeholder="Nome do jogo">
 
+        <br><br>
 
-<thead>
+        <input
+            id="ratingGame"
+            type="number"
+            min="0"
+            max="10"
+            placeholder="Rating">
 
-<tr>
+        <br><br>
 
-<th>ID</th>
-<th>Nome</th>
-<th>Rating</th>
-<th>Privado</th>
-<th>Ações</th>
+        <label>
 
-</tr>
+            <input
+                id="privadoGame"
+                type="checkbox">
 
+            Jogo privado
 
-</thead>
+        </label>
 
+        <br><br>
 
+        <button onclick="publicarGame()">
+            Publicar
+        </button>
 
-<tbody id="listaGames">
+    </div>
 
 
-</tbody>
+    <hr>
 
 
+    <h2>Jogos</h2>
 
-</table>
 
+    <table border="1">
 
+        <thead>
 
-<hr>
+            <tr>
 
+                <th>ID</th>
 
+                <th>Nome</th>
 
-<h2>Publicar jogo</h2>
+                <th>Rating</th>
 
+                <th>Privado</th>
 
-<label>
-Nome:
-</label>
+                <th>Ações</th>
 
-<input 
-id="nomeGame"
-type="text"
->
+            </tr>
 
+        </thead>
 
-<br>
 
+        <tbody id="listaGames">
 
-<label>
-Rating:
-</label>
+        </tbody>
 
-<input 
-id="ratingGame"
-type="number"
->
+    </table>
 
 
-<br>
-
-
-<label>
-Privado:
-</label>
-
-
-<select id="privadoGame">
-
-
-<option value="false">
-Não
-</option>
-
-
-<option value="true">
-Sim
-</option>
-
-
-</select>
-
-
-
-<br><br>
-
-
-
-<button onclick="publicarGame()">
-
-Publicar jogo
-
-</button>
-
-
-
-
-<br><br>
-
-
-<button onclick="voltarDashboard()">
-
-Voltar
-
-</button>
-
-
-
-<script src="games.js"></script>
-
+    <script src="./games.js"></script>
 
 </body>
-
 
 </html>
