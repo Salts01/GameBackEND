@@ -1,94 +1,52 @@
 const API = "http://localhost:8000";
 
-const token = localStorage.getItem("token");
 
+// ======================================================
+// TOKEN
+// ======================================================
 
-if (!token) {
+function getToken() {
 
-    window.location.href = "./login.html";
+    const token = localStorage.getItem("token");
 
-}
-
-
-// ============================
-// DECODIFICAR TOKEN
-// ============================
-
-function decodificarToken(token) {
-
-    try {
-
-        const payload = token.split(".")[1];
-
-        const base64 =
-            payload
-                .replace(/-/g, "+")
-                .replace(/_/g, "/");
-
-        return JSON.parse(
-            decodeURIComponent(
-                atob(base64)
-                    .split("")
-                    .map(function(char) {
-
-                        return "%" +
-                            ("00" +
-                            char.charCodeAt(0).toString(16))
-                            .slice(-2);
-
-                    })
-                    .join("")
-            )
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        localStorage.removeItem("token");
+    if (!token) {
 
         window.location.href = "./login.html";
+        return null;
 
     }
 
+    return token;
+
 }
 
 
-const usuario =
-    decodificarToken(token);
-
-
-console.log("Usuário:", usuario);
-
-
-// ============================
+// ======================================================
 // LISTAR JOGOS
-// ============================
+// ======================================================
 
 async function carregarGames() {
+
+    const token = getToken();
+
+    if (!token) return;
+
 
     try {
 
         const resposta = await fetch(
-
-            `${API}/game/Visualizador` +
-
-            `?token=${encodeURIComponent(token)}`
-
+            `${API}/game/Visualizador?token=${encodeURIComponent(token)}`
         );
 
 
-        const games =
-            await resposta.json();
+        const games = await resposta.json();
+
+        console.log("Jogos:", games);
 
 
-        console.log("Games:", games);
+        if (!Array.isArray(games)) {
 
-
-        if (!resposta.ok) {
-
-            alert(JSON.stringify(games));
-
+            alert(games);
             return;
 
         }
@@ -96,7 +54,6 @@ async function carregarGames() {
 
         const tabela =
             document.getElementById("listaGames");
-
 
         tabela.innerHTML = "";
 
@@ -107,29 +64,6 @@ async function carregarGames() {
                 document.createElement("tr");
 
 
-            let botoes = "";
-
-
-            // Level 1 e 2 podem alterar/deletar
-            if (usuario.level <= 2) {
-
-                botoes = `
-
-                    <button
-                        onclick="alterarGame(${game.Id})">
-                        Alterar
-                    </button>
-
-                    <button
-                        onclick="deletarGame(${game.Id})">
-                        Deletar
-                    </button>
-
-                `;
-
-            }
-
-
             linha.innerHTML = `
 
                 <td>${game.Id}</td>
@@ -138,9 +72,23 @@ async function carregarGames() {
 
                 <td>${game.Rating}</td>
 
-                <td>${game.Privado}</td>
+                <td>
+                    ${game.Privado ? "Privado" : "Público"}
+                </td>
 
-                <td>${botoes}</td>
+                <td>
+
+                    <button
+                        onclick="alterarGame(${game.Id})">
+                        Alterar
+                    </button>
+
+                    <button
+                        onclick="deletarGame(${game.Id})">
+                        Excluir
+                    </button>
+
+                </td>
 
             `;
 
@@ -161,17 +109,24 @@ async function carregarGames() {
 }
 
 
-// ============================
+// ======================================================
 // PUBLICAR JOGO
-// ============================
+// ======================================================
 
 async function publicarGame() {
+
+    const token = getToken();
+
+    if (!token) return;
+
 
     const nome =
         document.getElementById("nomeGame").value;
 
+
     const rating =
         document.getElementById("ratingGame").value;
+
 
     const privado =
         document.getElementById("privadoGame").checked;
@@ -202,10 +157,13 @@ async function publicarGame() {
             await resposta.json();
 
 
+        console.log("Resultado:", resultado);
+
         alert(JSON.stringify(resultado));
 
 
         carregarGames();
+
 
     } catch (error) {
 
@@ -218,23 +176,26 @@ async function publicarGame() {
 }
 
 
-// ============================
+// ======================================================
 // ALTERAR JOGO
-// ============================
+// ======================================================
 
 async function alterarGame(id) {
+
+    const token = getToken();
+
+    if (!token) return;
+
 
     const rating =
         prompt("Novo rating:");
 
 
-    if (rating === null) {
-        return;
-    }
+    if (rating === null) return;
 
 
     const privado =
-        confirm("O jogo deve ser privado?");
+        confirm("O jogo será privado?");
 
 
     try {
@@ -262,10 +223,13 @@ async function alterarGame(id) {
             await resposta.json();
 
 
+        console.log("Resultado:", resultado);
+
         alert(JSON.stringify(resultado));
 
 
         carregarGames();
+
 
     } catch (error) {
 
@@ -278,11 +242,16 @@ async function alterarGame(id) {
 }
 
 
-// ============================
+// ======================================================
 // DELETAR JOGO
-// ============================
+// ======================================================
 
 async function deletarGame(id) {
+
+    const token = getToken();
+
+    if (!token) return;
+
 
     const confirmar =
         confirm(
@@ -290,9 +259,7 @@ async function deletarGame(id) {
         );
 
 
-    if (!confirmar) {
-        return;
-    }
+    if (!confirmar) return;
 
 
     try {
@@ -316,34 +283,27 @@ async function deletarGame(id) {
             await resposta.json();
 
 
+        console.log("Resultado:", resultado);
+
         alert(JSON.stringify(resultado));
 
 
         carregarGames();
 
+
     } catch (error) {
 
         console.error(error);
 
-        alert("Erro ao deletar jogo.");
+        alert("Erro ao excluir jogo.");
 
     }
 
 }
 
 
-// ============================
-// CONTROLE DA INTERFACE
-// ============================
-
-// Level 1 e 2 podem publicar
-if (usuario.level > 2) {
-
-    document.getElementById(
-        "areaPublicar"
-    ).style.display = "none";
-
-}
-
+// ======================================================
+// INICIALIZA
+// ======================================================
 
 carregarGames();

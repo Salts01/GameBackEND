@@ -3,101 +3,89 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+```
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>GameBackEND - Jogos</title>
+<title>GameBackEND - Jogos</title>
+```
 
 </head>
 
 <body>
 
-    <h1>Gerenciamento de Jogos</h1>
+```
+<h1>Gerenciamento de Jogos</h1>
 
-    <a href="./dashboard.html">
-        Voltar para Dashboard
-    </a>
+<a href="./dashboard.html">
+    Voltar para Dashboard
+</a>
 
-    <hr>
+<hr>
 
+<div id="areaPublicar">
 
-    <div id="areaPublicar">
+    <h2>Publicar jogo</h2>
 
-        <h2>Publicar jogo</h2>
+    <input
+        id="nomeGame"
+        type="text"
+        placeholder="Nome do jogo">
 
+    <br><br>
+
+    <input
+        id="ratingGame"
+        type="number"
+        min="0"
+        max="10"
+        placeholder="Rating">
+
+    <br><br>
+
+    <label>
         <input
-            id="nomeGame"
-            type="text"
-            placeholder="Nome do jogo">
+            id="privadoGame"
+            type="checkbox">
 
-        <br><br>
+        Jogo privado
+    </label>
 
-        <input
-            id="ratingGame"
-            type="number"
-            min="0"
-            max="10"
-            placeholder="Rating">
+    <br><br>
 
-        <br><br>
+    <button onclick="publicarGame()">
+        Publicar
+    </button>
 
-        <label>
+</div>
 
-            <input
-                id="privadoGame"
-                type="checkbox">
+<hr>
 
-            Jogo privado
+<h2>Jogos</h2>
 
-        </label>
+<table border="1">
 
-        <br><br>
+    <thead>
 
-        <button onclick="publicarGame()">
-            Publicar
-        </button>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Rating</th>
+            <th>Privado</th>
+            <th>Ações</th>
+        </tr>
 
-    </div>
+    </thead>
 
+    <tbody id="listaGames">
+    </tbody>
 
-    <hr>
+</table>
 
-
-    <h2>Jogos</h2>
-
-
-    <table border="1">
-
-        <thead>
-
-            <tr>
-
-                <th>ID</th>
-
-                <th>Nome</th>
-
-                <th>Rating</th>
-
-                <th>Privado</th>
-
-                <th>Ações</th>
-
-            </tr>
-
-        </thead>
-
-
-        <tbody id="listaGames">
-
-        </tbody>
-
-    </table>
-
-
-    <script src="./games.js"></script>
+<script src="./games.js"></script>
+```
 
 </body>
 

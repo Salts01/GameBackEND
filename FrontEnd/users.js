@@ -1,19 +1,35 @@
 const API = "http://localhost:8000";
 
-const token = localStorage.getItem("token");
 
-if (!token) {
+// ======================================================
+// PEGAR TOKEN
+// ======================================================
 
-    window.location.href = "./login.html";
+function getToken() {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+
+        window.location.href = "./login.html";
+        return null;
+
+    }
+
+    return token;
 
 }
 
 
-// ============================
+// ======================================================
 // LISTAR USUÁRIOS
-// ============================
+// ======================================================
 
 async function carregarUsuarios() {
+
+    const token = getToken();
+
+    if (!token) return;
 
     try {
 
@@ -25,11 +41,12 @@ async function carregarUsuarios() {
 
         console.log("Usuários:", usuarios);
 
-        if (!resposta.ok) {
+        // Caso a API retorne uma mensagem
+        if (!Array.isArray(usuarios)) {
 
-            alert(JSON.stringify(usuarios));
-
+            alert(usuarios);
             return;
+
         }
 
         const tabela =
@@ -39,28 +56,19 @@ async function carregarUsuarios() {
 
         usuarios.forEach(user => {
 
-            const linha =
-                document.createElement("tr");
+            const linha = document.createElement("tr");
 
             linha.innerHTML = `
-
                 <td>${user.Nome}</td>
-
                 <td>${user.Email}</td>
-
                 <td>${user.Nivel}</td>
-
-                <td>${user.Ativo}</td>
+                <td>${user.Ativo ? "Ativo" : "Desativado"}</td>
 
                 <td>
-
-                    <button
-                        onclick="alterarUsuario('${user.Email}')">
+                    <button onclick="alterarUsuario('${user.Email}')">
                         Alterar
                     </button>
-
                 </td>
-
             `;
 
             tabela.appendChild(linha);
@@ -78,11 +86,16 @@ async function carregarUsuarios() {
 }
 
 
-// ============================
+// ======================================================
 // CRIAR USUÁRIO
-// ============================
+// ======================================================
 
 async function criarUsuario() {
+
+    const token = getToken();
+
+    if (!token) return;
+
 
     const nome =
         document.getElementById("nomeNovo").value;
@@ -100,30 +113,24 @@ async function criarUsuario() {
     try {
 
         const resposta = await fetch(
-
             `${API}/admin/criarUser` +
-
             `?nome=${encodeURIComponent(nome)}` +
-
             `&email=${encodeURIComponent(email)}` +
-
             `&password=${encodeURIComponent(password)}` +
-
             `&level=${encodeURIComponent(level)}` +
-
             `&token=${encodeURIComponent(token)}`,
-
             {
                 method: "POST"
             }
-
         );
 
 
-        const resultado =
-            await resposta.json();
+        const resultado = await resposta.json();
+
+        console.log("Resultado:", resultado);
 
         alert(JSON.stringify(resultado));
+
 
         carregarUsuarios();
 
@@ -138,60 +145,51 @@ async function criarUsuario() {
 }
 
 
-// ============================
+// ======================================================
 // ALTERAR USUÁRIO
-// ============================
+// ======================================================
 
 async function alterarUsuario(email) {
 
-    const password =
-        prompt("Nova senha:");
+    const token = getToken();
 
-    if (password === null) {
-        return;
-    }
+    if (!token) return;
 
 
-    const level =
-        prompt("Novo nível (1-4):");
+    const password = prompt("Nova senha:");
 
-    if (level === null) {
-        return;
-    }
+    if (password === null) return;
 
 
-    const ativo =
-        confirm("Usuário ativo?");
+    const level = prompt("Novo nível:");
+
+    if (level === null) return;
+
+
+    const ativo = confirm("Usuário ativo?");
 
 
     try {
 
         const resposta = await fetch(
-
             `${API}/admin/alteraUser` +
-
             `?email=${encodeURIComponent(email)}` +
-
             `&password=${encodeURIComponent(password)}` +
-
             `&level=${encodeURIComponent(level)}` +
-
             `&ativo=${ativo}` +
-
             `&token=${encodeURIComponent(token)}`,
-
             {
                 method: "POST"
             }
-
         );
 
 
-        const resultado =
-            await resposta.json();
+        const resultado = await resposta.json();
 
+        console.log("Resultado:", resultado);
 
         alert(JSON.stringify(resultado));
+
 
         carregarUsuarios();
 
@@ -205,5 +203,9 @@ async function alterarUsuario(email) {
 
 }
 
+
+// ======================================================
+// INICIALIZA
+// ======================================================
 
 carregarUsuarios();

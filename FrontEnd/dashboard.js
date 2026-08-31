@@ -1,5 +1,8 @@
 const token = localStorage.getItem("token");
+const refreshToken = localStorage.getItem("refreshToken");
 
+
+// Verifica se existe token
 if (!token) {
 
     window.location.href = "./login.html";
@@ -8,77 +11,60 @@ if (!token) {
 
 
 // Decodifica o payload do JWT
-function decodificarToken(token) {
+function decodificarJWT(token) {
 
     try {
 
         const payload = token.split(".")[1];
 
-        const base64 = payload
+        const payloadBase64 = payload
             .replace(/-/g, "+")
             .replace(/_/g, "/");
 
-        const jsonPayload =
-            decodeURIComponent(
-                atob(base64)
-                    .split("")
-                    .map(function(char) {
-                        return "%" +
-                            ("00" + char.charCodeAt(0).toString(16))
-                            .slice(-2);
-                    })
-                    .join("")
-            );
+        const jsonPayload = decodeURIComponent(
+            atob(payloadBase64)
+                .split("")
+                .map(function(c) {
+                    return "%" +
+                        ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+                })
+                .join("")
+        );
 
         return JSON.parse(jsonPayload);
 
     } catch (error) {
 
-        console.error("Token inválido:", error);
+        console.error("Erro ao decodificar JWT:", error);
+        return null;
 
-        localStorage.removeItem("token");
-
-        window.location.href = "./login.html";
     }
+
 }
 
 
-const usuario = decodificarToken(token);
+const usuario = decodificarJWT(token);
 
 console.log("Usuário:", usuario);
 
 
-// Preenche informações
-document.getElementById("nome").textContent =
-    usuario.nome;
+if (!usuario) {
 
-document.getElementById("email").textContent =
-    usuario.email;
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
 
-document.getElementById("level").textContent =
-    usuario.level;
+    window.location.href = "./login.html";
 
+} else {
 
-// Controle dos menus
-const usuariosMenu =
-    document.getElementById("usuariosMenu");
+    document.getElementById("nome").textContent =
+        usuario.nome;
 
-const jogosMenu =
-    document.getElementById("jogosMenu");
+    document.getElementById("email").textContent =
+        usuario.email;
 
-
-// Level 1 pode administrar usuários
-if (usuario.level !== 1) {
-
-    usuariosMenu.style.display = "none";
-
-}
-
-
-// Level 1, 2 e 3 podem acessar jogos
-if (usuario.level > 3) {
-
-    jogosMenu.style.display = "none";
+    document.getElementById("level").textContent =
+        usuario.level;
 
 }
 
@@ -89,6 +75,7 @@ document
     .addEventListener("click", function() {
 
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
 
         window.location.href = "./login.html";
 

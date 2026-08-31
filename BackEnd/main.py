@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt
+import time, datetime
+from datetime import timezone
 
 keysec='literalsecret'
 
@@ -66,11 +68,26 @@ def Logar(email:str,password:str):
                     
         else:
             if password == user.password:
-                token=jwt.encode({'level':user.level,'nome':user.nome,'email':user.email},keysec,algorithm='HS256')
-                return token
+                token=jwt.encode({'level':user.level,'nome':user.nome,'email':user.email,'exp':datetime.datetime.now(tz=timezone.utc)+datetime.timedelta(minutes=20)},keysec,algorithm='HS256')
+                tokenrefresh=jwt.encode({'level':user.level,'nome':user.nome,'email':user.email,'exp':datetime.datetime.now(tz=timezone.utc)+datetime.timedelta(hours=1)},keysec,algorithm='HS256')
+                return token,tokenrefresh
 
 
                                
+
+@api.post('/tokenrefresh')
+def refresh(tokenrefres:str):
+    try:
+        trefreshed=jwt.decode(tokenrefres,keysec,algorithms='HS256')
+
+    except:
+        return 'token inválido'
+
+    else:
+
+        token=jwt.encode({'level':trefreshed['level'],'nome':trefreshed['nome'],'email':trefreshed['email'],'exp':datetime.datetime.now(tz=timezone.utc)+datetime.timedelta(minutes=20)},keysec,algorithm='HS256')
+        return token
+
 
 @api.post('/admin/criarUser')
 def CriarUser(nome:str,email:str,password:str,level:int,token:str):
